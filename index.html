@@ -108,6 +108,17 @@ h2.sec{font-size:clamp(1.6rem,3.4vw,2.2rem);margin:0 0 18px;letter-spacing:-.01e
 .cm small{color:var(--mute)}
 .cm button{padding:2px 8px;background:transparent;color:var(--mute);border:0;font-size:.8rem}
 .cnone{color:var(--mute);padding:8px 0}
+body.intro-wait #site{opacity:0}
+.getapp{margin:14px 0 0;font-size:.9rem}
+.getapp a{color:var(--g);font-weight:600}
+.afoot{margin:10px 0 0;font-size:.75rem}
+.afoot a{color:var(--mute)}
+#adminbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--card);border:1px dashed var(--g);border-radius:14px;padding:8px 14px;margin-bottom:12px;font-size:.9rem}
+#adminbar button{padding:4px 12px;font-size:.8rem}
+#pdlg img{width:100%;max-height:320px;object-fit:cover;border-radius:14px}
+#pdlg h2{margin:12px 0 4px}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0;font-size:.95rem}
+.dl dt{color:var(--mute)}
 #install{padding:8px 16px;background:var(--card);color:var(--g);border:1px solid var(--g)}
 .chatbox{display:flex;flex-direction:column;height:min(72vh,580px);background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden}
 .chathead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:.85rem;color:var(--mute)}
@@ -147,7 +158,7 @@ dialog .row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 @media(max-width:760px){.hero .wrap{grid-template-columns:1fr}.links{display:none}  .gal{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}.gal figure:nth-child(n){grid-column:auto;grid-row:auto}.gal figure:nth-child(1),.gal figure:nth-child(6){grid-column:span 2}}
 
 /* ---- build-in animations (different pattern per element) ---- */
-[data-a]{transition:opacity .55s,transform .7s cubic-bezier(.2,.8,.2,1),clip-path .9s cubic-bezier(.6,0,.2,1)}
+[data-a]{transition:opacity .3s,transform .4s cubic-bezier(.2,.8,.2,1),clip-path .5s cubic-bezier(.6,0,.2,1)}
 .pre{opacity:0!important}
 .pre.a-up{transform:translateY(24px)}
 .pre.a-left{transform:translateX(-50px)}
@@ -159,7 +170,7 @@ dialog .row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 
 /* ---- cursors ---- */
 #curs{position:absolute;top:0;left:0;width:100%;height:0;z-index:90;pointer-events:none}
-.cur{position:absolute;left:0;top:0;transition:transform .38s cubic-bezier(.4,.1,.2,1)}
+.cur{position:absolute;left:0;top:0;transition:transform .16s cubic-bezier(.4,.1,.2,1)}
 .cur svg{width:24px;height:24px;filter:drop-shadow(0 2px 3px #0006);display:block}
 .cur span{position:absolute;left:18px;top:20px;padding:2px 8px;border-radius:99px;color:#fff;font:600 11px system-ui;white-space:nowrap}
 .ring{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid;animation:ring .6s ease-out forwards;pointer-events:none}
@@ -200,7 +211,7 @@ dialog{max-height:90vh;overflow:auto}
 #skip{position:fixed;right:14px;bottom:14px;z-index:99;background:#000a;font-size:.85rem;padding:8px 14px}
 </style>
 </head>
-<body>
+<body class="intro-wait">
 <div id="prog"></div>
 <div id="curs"></div>
 <div id="site">
@@ -220,6 +231,7 @@ dialog{max-height:90vh;overflow:auto}
       <p class="lead">A living collection of flowers, herbs and trees, tended every day by hand.</p>
       <a class="btn" href="#plants">Meet the plants</a>
       <div class="vote" id="gvote" data-id="garden" title="What do you think of Maa's garden?"></div>
+      <p class="getapp"><a href="#" id="getapp">📲 Get this as an app on your phone</a></p>
     </div>
     <div class="hero-img slot" data-e="🌺"><img src="images/hero.jpg" alt="The garden" onerror="this.remove()"></div>
   </div>
@@ -251,9 +263,11 @@ dialog{max-height:90vh;overflow:auto}
 
 <section class="block" id="plants"><div class="wrap">
   <h2 class="sec">The plants</h2>
+  <div id="adminbar" hidden><span>🔑 Admin mode: you can add, edit and delete plants.</span><button type="button" class="ghost" id="alogout">Log out</button></div>
   <div class="bar">
     <input id="q" placeholder="Search plants…">
     <select id="loc"><option value="">All spots</option></select>
+    <button type="button" id="addp" hidden>+ Add plant</button>
   </div>
   <div class="grid" id="grid"></div>
 </div></section>
@@ -282,7 +296,8 @@ dialog{max-height:90vh;overflow:auto}
 </div></section>
 
 <footer><div class="wrap"><p class="foot">Made with love for Maa · every plant, every season 🌱</p>
-<p class="foot credit">© 2026 Volt Code. All rights reserved. · Made by Sufian Hossain</p></div></footer>
+<p class="foot credit">© 2026 Volt Code. All rights reserved. · Made by Sufian Hossain</p>
+<p class="afoot"><a href="#" id="adminlink">🔑 Admin</a></p></div></footer>
 
 <dialog id="cdlg">
   <h3 id="ct" style="margin:0 0 10px">Comments</h3>
@@ -295,22 +310,52 @@ dialog{max-height:90vh;overflow:auto}
 </dialog>
 
 <dialog id="dlg">
-  <form method="dialog" id="f">
-    <h2 id="dt" style="margin:0 0 4px">Add plant</h2>
-    <label>Photo</label>
+  <form id="f">
+    <h2 id="dt" style="margin:0 0 4px">Add a plant</h2>
+    <label>Photo (take one now or choose from the gallery)</label>
     <input type="file" id="photo" accept="image/*">
     <img id="prev" hidden alt="">
-    <label>Name</label><input id="name" required>
-    <label>Where in the garden</label><input id="where" placeholder="e.g. Rooftop, front yard, balcony" list="spots">
+    <label>Name</label><input id="name" required maxlength="60" placeholder="e.g. Hibiscus">
+    <label>Type</label>
+    <select id="ptype"><option value="">Choose…</option><option>Flower</option><option>Vegetable</option><option>Herb</option><option>Tree</option><option>Indoor</option><option>Succulent</option><option>Other</option></select>
+    <label>Where in the garden</label><input id="where" maxlength="40" placeholder="e.g. Rooftop, front yard, balcony" list="spots">
     <datalist id="spots"></datalist>
-    <label>Water every (days)</label><input id="every" type="number" min="1" placeholder="e.g. 3">
+    <label>Sunlight</label>
+    <select id="psun"><option value="">Choose…</option><option>Full sun</option><option>Partial sun</option><option>Morning sun</option><option>Bright light</option><option>Bright shade</option><option>Shade</option></select>
+    <label>Water every (days)</label><input id="every" type="number" min="1" max="365" placeholder="e.g. 3">
     <label>Last watered</label><input id="last" type="date">
-    <label>Notes</label><textarea id="notes" rows="3" placeholder="Flowers in winter, needs sun…"></textarea>
+    <label>Notes</label><textarea id="notes" rows="3" maxlength="600" placeholder="Flowers in winter, needs sun…"></textarea>
     <div class="row">
       <button type="button" class="danger" id="del" hidden>Delete</button>
       <button type="button" class="ghost" id="cancel">Cancel</button>
-      <button type="submit">Save</button>
+      <button type="submit" id="fsave">Save</button>
     </div>
+  </form>
+</dialog>
+
+<dialog id="idlg">
+  <h3 style="margin:0 0 8px">📲 Get Maa's Garden as an app</h3>
+  <p style="margin:0 0 10px;color:var(--mute);font-size:.9rem">It's free and there is nothing to download from a store.</p>
+  <dl class="dl" style="grid-template-columns:1fr">
+    <dt><b>🤖 Android (Chrome)</b></dt><dd style="margin:0 0 8px">Tap the ⋮ menu, then <b>Install app</b> (or <b>Add to Home screen</b>).</dd>
+    <dt><b>🍎 iPhone (Safari)</b></dt><dd style="margin:0 0 8px">Tap the Share button ⬆, then <b>Add to Home Screen</b>.</dd>
+    <dt><b>💻 Laptop or computer</b></dt><dd style="margin:0 0 8px">Just open the web address in any browser. In Chrome or Edge you can also click the install icon at the right of the address bar.</dd>
+  </dl>
+  <div class="row"><button type="button" class="ghost" id="iclose">Close</button><button type="button" id="icopy">Copy the web address</button></div>
+</dialog>
+
+<dialog id="pdlg">
+  <div id="pbody"></div>
+  <div class="row"><button type="button" class="ghost" id="pclose">Close</button><button type="button" id="pedit" hidden>✏️ Edit</button></div>
+</dialog>
+
+<dialog id="adlg">
+  <form id="af">
+    <h3 style="margin:0 0 6px">🔑 Admin login</h3>
+    <p style="margin:0 0 10px;color:var(--mute);font-size:.9rem">Only Maa can add or change plants. Enter the admin password.</p>
+    <input id="acode" type="password" placeholder="Admin password" autocomplete="off" required>
+    <p id="amsg" style="margin:8px 0 0;color:#c0392b;font-size:.85rem;min-height:1.2em"></p>
+    <div class="row"><button type="button" class="ghost" id="acancel">Cancel</button><button type="submit">Log in</button></div>
   </form>
 </dialog>
 </div>
@@ -318,9 +363,12 @@ dialog{max-height:90vh;overflow:auto}
 
 <script>
 const KEY='mothers-garden-v1';
-let plants=[];try{plants=JSON.parse(localStorage.getItem(KEY)||'[]')}catch{}
-/* starter plants from the photos Maa sent (names are best guesses — edit any card to correct them) */
-{
+setTimeout(()=>document.body.classList.remove('intro-wait'),4500); // safety: never leave the page hidden
+const API='https://main-pc.tail94e406.ts.net';   // the garden server (chat + plant list)
+const PK=KEY+'-plants-cache';
+let plants=[];try{plants=JSON.parse(localStorage.getItem(PK)||'[]')}catch{}
+/* fallback list, used only if the garden server and the cache are both unavailable */
+if(!plants.length){
   const S=[['Moss rose (Portulaca)','Rooftop','photo-26.jpg','Bright pink flowers that open in the sun.'],
     ['Gerbera daisy','Rooftop','photo-30.jpg','Soft pink petals, loves morning light.'],
     ['Desert rose (Adenium)','Rooftop','photo-29.jpg','Pink trumpet flowers on a thick stem.'],
@@ -331,14 +379,16 @@ let plants=[];try{plants=JSON.parse(localStorage.getItem(KEY)||'[]')}catch{}
     ['Palm & dracaena corner','Rooftop','photo-25.jpg','Tall leafy plants beside the blue drum.'],
     ['Balcony greens (Dieffenbachia)','Balcony','photo-balcony-1.jpg','Big patterned leaves in bright green and yellow pots.'],
     ['Anthurium & dieffenbachia','Balcony','photo-balcony-2.jpg','Indoor corner by the window with red anthurium flowers.']];
-  let seen=[];try{seen=JSON.parse(localStorage.getItem(KEY+'-seen')||'[]')}catch{}
-  S.forEach(([name,where,photo,notes],i)=>{if(seen.includes(photo))return;seen.push(photo);
-    if(!plants.some(p=>p.photo==='images/'+photo))plants.push({id:Date.now()+i,name,where,every:'',last:'',notes,photo:'images/'+photo})});
-  try{localStorage.setItem(KEY,JSON.stringify(plants));localStorage.setItem(KEY+'-seen',JSON.stringify(seen))}catch{}
+  plants=S.map(([name,where,photo,notes],i)=>({id:'p'+(i+1),name,where,type:'',sun:'',every:'',last:'',notes,photo:'images/'+photo}));
 }
+const cachePlants=()=>{try{localStorage.setItem(PK,JSON.stringify(plants))}catch{}};
+/* the real list comes from the garden server, so everyone sees what Maa adds */
+const plantsReady=(async()=>{
+  try{const r=await fetch(API+'/plants.json',{cache:'no-store'});
+    if(r.ok){const l=await r.json();if(Array.isArray(l)){plants=l;cachePlants();render()}}}catch{}
+})();
 const $=id=>document.getElementById(id);
 let editing=null,photoData='';
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(plants))}catch{alert('Storage full — try smaller photos or delete some.')}};
 const daysSince=d=>Math.floor((Date.now()-new Date(d))/864e5);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
@@ -386,33 +436,93 @@ function render(){
     <div class="b"><h3>${esc(p.name)}</h3><small>${esc(p.where)}</small><br>${tag}<div class="vote" data-id="${p.id}">${voteHtml(p.id)}</div></div></div>`}).join('')
     :`<div class="empty">${plants.length?'No matches.':'No plants to show yet 🌱'}</div>`;
 }
+/* ---------- admin: only Maa (with the admin password) can add, edit or delete plants ---------- */
+const ADK=KEY+'-admin';let adminCode='',isAdmin=false;
+try{adminCode=localStorage.getItem(ADK)||''}catch{}
+const adminHdr=()=>({'Content-Type':'application/json','X-Admin-Code':adminCode});
+function adminUI(){$('addp').hidden=!isAdmin;$('adminbar').hidden=!isAdmin}
+function adminOut(){adminCode='';isAdmin=false;try{localStorage.removeItem(ADK)}catch{}adminUI()}
+async function verifyAdmin(code){
+  try{const r=await fetch(API+'/admin/check',{headers:{'X-Admin-Code':code}});return r.ok?'ok':(r.status===401?'wrong':(r.status===429?'wait':'down'))}catch{return 'down'}
+}
+(async()=>{if(adminCode){isAdmin=(await verifyAdmin(adminCode))==='ok';if(!isAdmin&&adminCode)adminCode=isAdmin?adminCode:'';adminUI()}})();
+$('adminlink').onclick=e=>{e.preventDefault();if(isAdmin){$('plants').scrollIntoView();return}$('acode').value='';$('amsg').textContent='';$('adlg').showModal();$('acode').focus()};
+$('acancel').onclick=()=>$('adlg').close();
+$('af').onsubmit=async e=>{e.preventDefault();
+  const c=$('acode').value.trim();if(!c)return;$('amsg').textContent='Checking…';
+  const v=await verifyAdmin(c);
+  if(v==='ok'){adminCode=c;isAdmin=true;try{localStorage.setItem(ADK,c)}catch{}adminUI();$('adlg').close();$('plants').scrollIntoView()}
+  else $('amsg').textContent=v==='wrong'?'That password is not right.':v==='wait'?'Too many tries. Wait a minute.':'The garden server is not reachable right now.'};
+$('alogout').onclick=()=>{adminOut();render()};
+
+const TYPEICON={Flower:'🌸',Vegetable:'🥬',Herb:'🌿',Tree:'🌳',Indoor:'🪴',Succulent:'🌵',Other:'🌱'};
 function openDlg(p){
   editing=p?p.id:null;photoData=p?.photo||'';
-  $('dt').textContent='Edit plant';
-  $('name').value=p?.name||'';$('where').value=p?.where||'';$('every').value=p?.every||'';
-  $('last').value=p?.last||'';$('notes').value=p?.notes||'';$('photo').value='';
+  $('dt').textContent=p?'Edit plant':'Add a plant';
+  $('name').value=p?.name||'';$('where').value=p?.where||'';$('ptype').value=p?.type||'';$('psun').value=p?.sun||'';
+  $('every').value=p?.every||'';$('last').value=p?.last||'';$('notes').value=p?.notes||'';$('photo').value='';
   $('prev').hidden=!photoData;$('prev').src=photoData;$('del').hidden=!p;
   $('dlg').showModal();
 }
 function shrink(file){return new Promise(res=>{
   const img=new Image(),r=new FileReader();
-  r.onload=()=>{img.onload=()=>{const m=800,s=Math.min(1,m/Math.max(img.width,img.height));
+  r.onload=()=>{img.onload=()=>{const m=1000,s=Math.min(1,m/Math.max(img.width,img.height));
     const c=document.createElement('canvas');c.width=img.width*s;c.height=img.height*s;
-    c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.75))};img.src=r.result};
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    let q=.78,d=c.toDataURL('image/jpeg',q);
+    while(d.length>400000&&q>.35){q-=.1;d=c.toDataURL('image/jpeg',q)}
+    res(d)};img.src=r.result};
   r.readAsDataURL(file)})}
 $('photo').onchange=async e=>{const f=e.target.files[0];if(!f)return;photoData=await shrink(f);$('prev').src=photoData;$('prev').hidden=false};
 $('cancel').onclick=()=>$('dlg').close();
+$('addp').onclick=()=>openDlg();
+/* read-only details for everyone; Edit/Delete only when logged in as admin */
+let viewing=null;
+function openDetail(p){
+  viewing=p;
+  const pc=$('pbody');pc.replaceChildren();
+  if(p.photo){const im=document.createElement('img');im.src=p.photo;im.alt=p.name;pc.append(im)}
+  const h=document.createElement('h2');h.textContent=(TYPEICON[p.type]||'🌱')+' '+p.name;pc.append(h);
+  const rows=[['Type',p.type],['Where',p.where],['Sunlight',p.sun],
+    ['Watering',p.every?'Every '+p.every+' day'+(p.every>1?'s':''):''],
+    ['Last watered',p.last?new Date(p.last+'T00:00').toLocaleDateString():''],
+    ['Next watering',p.every&&p.last?(()=>{const left=p.every-daysSince(p.last);return left<=0?'Now 💧':'In '+left+' day'+(left>1?'s':'')})():'']].filter(r=>r[1]);
+  if(rows.length){const dl=document.createElement('dl');dl.className='dl';rows.forEach(([k,v])=>{const a=document.createElement('dt'),b=document.createElement('dd');a.textContent=k;b.textContent=v;b.style.margin=0;dl.append(a,b)});pc.append(dl)}
+  if(p.notes){const n=document.createElement('p');n.textContent=p.notes;n.style.color='var(--mute)';pc.append(n)}
+  $('pedit').hidden=!isAdmin;
+  $('pdlg').showModal();
+}
+$('pclose').onclick=()=>$('pdlg').close();
+$('pedit').onclick=()=>{$('pdlg').close();openDlg(viewing)};
 $('grid').onclick=e=>{
   const vb=e.target.closest('.vote button');
   if(vb&&vb.dataset.c){const id=vb.closest('.vote').dataset.id;openComments(id,(plants.find(p=>p.id==id)||{}).name||'Plant');return}
   if(vb){castVote(vb.closest('.vote').dataset.id,vb.dataset.v);vb.closest('.vote').innerHTML=voteHtml(vb.closest('.vote').dataset.id);return}
-  const c=e.target.closest('.card');if(c)openDlg(plants.find(p=>p.id==c.dataset.id))};
-$('f').onsubmit=()=>{
-  const d={name:$('name').value.trim(),where:$('where').value.trim(),every:+$('every').value||'',last:$('last').value,notes:$('notes').value.trim(),photo:photoData};
-  if(editing){Object.assign(plants.find(p=>p.id==editing),d)}else plants.unshift({id:Date.now(),...d});
-  save();render();
+  const c=e.target.closest('.card');if(c){const p=plants.find(p=>p.id==c.dataset.id);if(p)openDetail(p)}};
+$('f').onsubmit=async e=>{
+  e.preventDefault();
+  const d={name:$('name').value.trim(),where:$('where').value.trim(),type:$('ptype').value,sun:$('psun').value,
+    every:$('every').value,last:$('last').value,notes:$('notes').value.trim(),photo:photoData};
+  const btn=$('fsave');btn.disabled=true;btn.textContent='Saving…';
+  try{
+    const r=await fetch(editing?`${API}/plants/${editing}.json`:`${API}/plants.json`,{method:editing?'PUT':'POST',headers:adminHdr(),body:JSON.stringify(d)});
+    if(r.status===401){adminOut();$('dlg').close();alert('Your admin login is no longer valid. Please log in again.');return}
+    if(!r.ok)throw 0;
+    const p=await r.json();
+    plants=editing?plants.map(x=>x.id===editing?p:x):[p,...plants];
+    cachePlants();render();$('dlg').close();
+  }catch{alert("Could not save. Please check the internet and that the garden server is on.")}
+  finally{btn.disabled=false;btn.textContent='Save'}
 };
-$('del').onclick=()=>{if(confirm('Delete this plant?')){plants=plants.filter(p=>p.id!=editing);save();$('dlg').close();render()}};
+$('del').onclick=async()=>{
+  if(!confirm('Delete this plant?'))return;
+  try{
+    const r=await fetch(`${API}/plants/${editing}.json`,{method:'DELETE',headers:adminHdr()});
+    if(r.status===401){adminOut();$('dlg').close();alert('Your admin login is no longer valid. Please log in again.');return}
+    if(!r.ok)throw 0;
+    plants=plants.filter(x=>x.id!==editing);cachePlants();$('dlg').close();render();
+  }catch{alert('Could not delete. Please try again.')}
+};
 $('q').oninput=$('loc').onchange=render;
 render();
 
@@ -420,7 +530,7 @@ render();
    Paste your Firebase Realtime Database URL below to make the chat shared by everyone, e.g.
    const CHAT_DB='https://your-project-default-rtdb.firebaseio.com';
    Leave it empty and the chat stays on this device only. */
-const CHAT_DB='https://main-pc.tail94e406.ts.net';
+const CHAT_DB=API;
 (()=>{
   const DB=CHAT_DB.replace(/\/+$/,'');
   const MK=KEY+'-chat',NK=KEY+'-uname',UK=KEY+'-uid';
@@ -524,11 +634,18 @@ let installEvt=null;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('install').hidden=false});
 $('install').onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;$('install').hidden=true};
 addEventListener('appinstalled',()=>{$('install').hidden=true});
+$('getapp').onclick=e=>{e.preventDefault();if(installEvt){$('install').click();return}$('idlg').showModal()};
+$('iclose').onclick=()=>$('idlg').close();
+$('icopy').onclick=async()=>{
+  const url=location.origin+location.pathname;
+  try{if(navigator.share){await navigator.share({title:"Maa's Garden",url});return}}catch{}
+  try{await navigator.clipboard.writeText(url);$('icopy').textContent='Copied ✓'}catch{$('icopy').textContent=url}};
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
 
 /* ================= self-building intro: 5 cursors build the site in parallel ================= */
 (async()=>{
-  if(/nointro/.test(location.search)){$('skip').remove();$('prog').remove();$('curs').remove();return}
+  if(/nointro/.test(location.search)){document.body.classList.remove('intro-wait');$('skip').remove();$('prog').remove();$('curs').remove();return}
+  await Promise.race([plantsReady,new Promise(r=>setTimeout(r,2000))]); // build the page with the real plant list
   let skipped=false;
   const root=document.documentElement,body=document.body;
   const $$=s=>[...document.querySelectorAll(s)];
@@ -538,7 +655,7 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
   $('skip').onclick=()=>{skipped=true};
 
   /* everything that gets built */
-  const SEL='.brand,.links a,.eyebrow,.hero h1,#count,.lead,.hero .btn,.hero-img,#gallery h2,.gal figure,#story h2,.maa,.about>div,#plants h2,.bar>*,.card,.empty,#chat h2,#chat .chatbox,#ai h2,#ai .chatbox,.foot';
+  const SEL='.brand,.links a,.eyebrow,.hero h1,#count,.lead,.hero .btn,.hero-img,#gallery h2,.gal figure,#story h2,.maa,.about>div,#plants h2,.bar>*:not([hidden]),.card,.empty,#chat h2,#chat .chatbox,#ai h2,#ai .chatbox,.foot';
   const T=$$(SEL);
   const A=['a-left','a-right','a-zoom','a-flip','a-up','a-wipe'];
   T.forEach((e,i)=>{
@@ -548,6 +665,7 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
     e.classList.add('pre',txt?'a-up':e.classList.contains('hero-img')?'a-wipe':A[i%A.length]);
   });
   const phs=$$('.about textarea').map(t=>[t,t.placeholder]);phs.forEach(([t])=>t.placeholder='');
+  body.classList.remove('intro-wait');
   let done=0;const show=el=>{if(!el.classList.contains('pre'))return;el.classList.remove('pre');$('prog').style.width=Math.min(100,++done/T.length*100)+'%'};
 
   /* colour director: morphs the whole palette like a video colour-grade */
@@ -561,7 +679,7 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
     {'--bg':'#eef7e8','--g':'#2f9e44','--h1':'#b2f2bb','--h2':'#fff3bf','--ink':'#22301f'}
   ];
   let building=true;
-  (async()=>{for(const s of stages){if(!building)return;setVars(s);await sleep(2300)}})();
+  (async()=>{for(const s of stages){if(!building)return;setVars(s);await sleep(900)}})();
 
   /* five cursors */
   const curBox=$('curs');
@@ -574,16 +692,16 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
     pos(x,y){this.x=x;this.y=y;this.el.style.transform=`translate(${x}px,${y}px)`}
     async to(el){const r=el.getBoundingClientRect();
       this.pos(r.left+scrollX+Math.min(r.width/2,140),r.top+scrollY+Math.min(r.height/2,26));
-      await sleep(420);ring(this.x,this.y,this.c)}
-    async pop(el){await this.to(el);show(el);await sleep(90)}
-    async type(el,sp=13){
+      await sleep(160);ring(this.x,this.y,this.c)}
+    async pop(el){await this.to(el);show(el);await sleep(30)}
+    async type(el,sp=4){
       const t=el.textContent;el.style.minHeight=el.offsetHeight+'px';el.textContent='';
       await this.to(el);show(el);
       for(const ch of Array.from(t)){el.textContent+=ch;
         const g=document.createRange();g.selectNodeContents(el);const b=g.getBoundingClientRect();
         this.pos(b.right+scrollX+4,b.top+scrollY+b.height/2);await sleep(sp)}
-      el.style.minHeight='';await sleep(60)}
-    async typePh(ta,txt){await this.to(ta);for(const ch of Array.from(txt)){ta.placeholder+=ch;await sleep(6)}}
+      el.style.minHeight='';await sleep(15)}
+    async typePh(ta,txt){await this.to(ta);for(const ch of Array.from(txt)){ta.placeholder+=ch;await sleep(2)}}
   }
   const W=innerWidth;
   const [c0,c1,c2,c3,c4]=[['#2f9e44','Design',80,160],['#e8590c','Words',W-120,220],['#1c7ed6','Photos',W/2,300],['#ae3ec9','Colour',160,420],['#f59f00','Plants',W-200,480]].map(a=>new Cur(...a));
@@ -591,38 +709,38 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
 
   /* camera: gently follows the cursors down the page */
   const cam=setInterval(()=>{const ys=[c0,c1,c2,c3,c4].map(c=>c.y);const avg=ys.reduce((a,b)=>a+b)/5;
-    window.scrollTo({top:Math.max(0,avg-innerHeight*.5),behavior:'smooth'})},450);
+    window.scrollTo({top:Math.max(0,avg-innerHeight*.5),behavior:'smooth'})},250);
 
-  await sleep(500);
+  await sleep(100);
   const tasks=[
     (async()=>{ // Design: nav + hero
       await c0.type(q('.brand')[0]);
       for(const a of q('.links a'))await c0.pop(a);
-      await c0.type(q('.eyebrow')[0]);await c0.type(q('.hero h1')[0],30);
-      await c0.type($('count'));await c0.type(q('.lead')[0],9);
+      await c0.type(q('.eyebrow')[0]);await c0.type(q('.hero h1')[0],12);
+      await c0.type($('count'));await c0.type(q('.lead')[0],2);
       await c0.pop(q('.hero .btn')[0]);await c0.pop(q('.hero-img')[0]);
     })(),
     (async()=>{ // Words: story
-      await sleep(900);
+      await sleep(250);
       await c1.type(q('#story h2')[0]);
       await c1.pop(q('.maa')[0]);
       for(const d of q('.about>div')){show(d);await c1.to(d);
         await c1.type(d.querySelector('h4'));
-        await c1.type(d.querySelector('p'),7)}
+        await c1.type(d.querySelector('p'),1)}
     })(),
     (async()=>{ // Photos: gallery
-      await sleep(500);
+      await sleep(100);
       await c2.type(q('#gallery h2')[0]);
       for(const f of q('.gal figure'))await c2.pop(f);
     })(),
     (async()=>{ // Colour: plants header + toolbar + footer
-      await sleep(1400);
+      await sleep(450);
       await c3.type(q('#plants h2')[0]);
-      for(const b of q('.bar>*'))await c3.pop(b);
-      for(const f of q('.foot'))await c3.type(f,10);
+      for(const b of q('.bar>*:not([hidden])'))await c3.pop(b);
+      for(const f of q('.foot'))await c3.type(f,3);
     })(),
     (async()=>{ // Plants: the cards
-      await sleep(1800);
+      await sleep(600);
       for(const c of q('.card,.empty'))await c4.pop(c);
       await c4.type(q('#chat h2')[0]);await c4.pop(q('#chat .chatbox')[0]);
       await c4.type(q('#ai h2')[0]);await c4.pop(q('#ai .chatbox')[0]);
@@ -636,9 +754,9 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.
   phs.forEach(([t,p])=>t.placeholder=p);
   $('prog').style.width='100%';
   root.removeAttribute('style');
-  await sleep(500);
+  await sleep(200);
   window.scrollTo({top:0,behavior:'smooth'});
-  await sleep(1200);
+  await sleep(700);
   curBox.style.transition='opacity .5s';curBox.style.opacity=0;
   removeEventListener('wheel',stop);removeEventListener('touchmove',stop);removeEventListener('keydown',stop);
   $('skip').remove();$('prog').style.opacity=0;

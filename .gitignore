@@ -1,1 +1,3 @@
 server/messages.db.json
+server/plants.db.json
+server/*.tmp
