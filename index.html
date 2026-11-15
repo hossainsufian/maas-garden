@@ -335,9 +335,11 @@ dialog{max-height:90vh;overflow:auto}
 
 <dialog id="idlg">
   <h3 style="margin:0 0 8px">📲 Get Maa's Garden as an app</h3>
-  <p style="margin:0 0 10px;color:var(--mute);font-size:.9rem">It's free and there is nothing to download from a store.</p>
+  <p style="margin:0 0 10px;color:var(--mute);font-size:.9rem">Free, with no app store needed.</p>
+  <a class="btn" href="downloads/MaasGarden.apk" download="MaasGarden.apk" style="display:block;text-align:center;margin-bottom:6px">⬇ Download the Android app (APK)</a>
+  <p style="margin:0 0 12px;color:var(--mute);font-size:.8rem">After it downloads, tap the file to install. If Android asks, allow installing from this browser.</p>
   <dl class="dl" style="grid-template-columns:1fr">
-    <dt><b>🤖 Android (Chrome)</b></dt><dd style="margin:0 0 8px">Tap the ⋮ menu, then <b>Install app</b> (or <b>Add to Home screen</b>).</dd>
+    <dt><b>🤖 Android, other way (Chrome)</b></dt><dd style="margin:0 0 8px">Tap the ⋮ menu, then <b>Install app</b> (or <b>Add to Home screen</b>).</dd>
     <dt><b>🍎 iPhone (Safari)</b></dt><dd style="margin:0 0 8px">Tap the Share button ⬆, then <b>Add to Home Screen</b>.</dd>
     <dt><b>💻 Laptop or computer</b></dt><dd style="margin:0 0 8px">Just open the web address in any browser. In Chrome or Edge you can also click the install icon at the right of the address bar.</dd>
   </dl>
@@ -634,7 +636,8 @@ let installEvt=null;
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('install').hidden=false});
 $('install').onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;$('install').hidden=true};
 addEventListener('appinstalled',()=>{$('install').hidden=true});
-$('getapp').onclick=e=>{e.preventDefault();if(installEvt){$('install').click();return}$('idlg').showModal()};
+$('getapp').onclick=e=>{e.preventDefault();$('idlg').showModal()};
+if(/; wv\)/.test(navigator.userAgent)||matchMedia('(display-mode: standalone)').matches)document.querySelector('.getapp').hidden=true; // already inside the app
 $('iclose').onclick=()=>$('idlg').close();
 $('icopy').onclick=async()=>{
   const url=location.origin+location.pathname;

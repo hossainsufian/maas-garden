@@ -1,5 +1,5 @@
 /* Service worker: lets the site install as an app and open even with a weak connection. */
-const V = 'garden-v1';
+const V = 'garden-v2';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'images/icon-192.png'];
 
 self.addEventListener('install', e => {
@@ -19,6 +19,7 @@ self.addEventListener('fetch', e => {
   if (r.method !== 'GET') return;
   const u = new URL(r.url);
   if (u.origin !== location.origin) return; // never touch chat/database requests
+  if (u.pathname.endsWith('.apk')) return;   // downloads go straight to the network, never cached
 
   // pages: network first (always the newest site), cached copy when offline
   if (r.mode === 'navigate') {
