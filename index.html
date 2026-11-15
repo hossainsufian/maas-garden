@@ -120,6 +120,8 @@ h2.sec{font-size:clamp(1.6rem,3.4vw,2.2rem);margin:0 0 18px;letter-spacing:-.01e
 .mnone{margin:auto;color:var(--mute);text-align:center}
 .chatbox form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
 .chatbox form[hidden]{display:none}
+#nf{flex-wrap:wrap}
+#nf input{min-width:140px}
 .m img{display:block;max-width:100%;max-height:260px;border-radius:12px;margin-top:6px}
 .ic{padding:0;width:42px;min-width:42px;height:42px;border-radius:50%;font-size:1.15rem;flex:none}
 .emobar{display:flex;flex-wrap:wrap;gap:2px;padding:6px 10px;border-top:1px solid var(--line)}
@@ -261,7 +263,7 @@ dialog{max-height:90vh;overflow:auto}
   <div class="chatbox">
     <div class="chathead"><span id="cstatus"></span><button type="button" class="ghost" id="rename"></button></div>
     <div id="msgs" aria-live="polite"></div>
-    <form id="nf"><input id="uname" placeholder="Your name to join the chat" maxlength="24" autocomplete="nickname" required><button type="submit">Join</button></form>
+    <form id="nf"><input id="uname" placeholder="Your name" maxlength="24" autocomplete="nickname" required><input id="fcode" type="password" placeholder="Family password" maxlength="60" autocomplete="off"><button type="submit">Join</button></form>
     <div class="emobar" id="emobar" hidden></div>
     <form id="mf" hidden><button type="button" class="ghost ic" id="emobtn" aria-label="Emoji">😊</button><button type="button" class="ghost ic" id="attach" aria-label="Send a photo">📎</button><input id="mtext" placeholder="Type a message…" maxlength="300" autocomplete="off"><button type="submit">Send</button></form>
     <input type="file" id="cphoto" accept="image/*" hidden>
@@ -422,13 +424,19 @@ const CHAT_DB='https://main-pc.tail94e406.ts.net';
 (()=>{
   const DB=CHAT_DB.replace(/\/+$/,'');
   const MK=KEY+'-chat',NK=KEY+'-uname',UK=KEY+'-uid';
-  let uname='',uid='',msgs=[],sig='',lastSend=0;
-  try{uname=localStorage.getItem(NK)||'';uid=localStorage.getItem(UK)||''}catch{}
+  const FK=KEY+'-fcode';
+  let uname='',uid='',code='',msgs=[],sig='',lastSend=0;
+  try{uname=localStorage.getItem(NK)||'';uid=localStorage.getItem(UK)||'';code=localStorage.getItem(FK)||''}catch{}
+  const hdr=()=>({'X-Family-Code':code});
+  const lockOut=why=>{code='';try{localStorage.removeItem(FK)}catch{}ui();$('cstatus').textContent=why};
   if(!uid){uid=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem(UK,uid)}catch{}}
   const ui=()=>{
-    $('nf').hidden=!!uname;$('mf').hidden=!uname;$('rename').hidden=!uname;
+    const need=!uname||(DB&&!code);
+    $('nf').hidden=!need;$('mf').hidden=need;$('rename').hidden=need;
+    $('fcode').hidden=!DB;$('fcode').required=!!DB;
     $('rename').textContent='👤 '+uname+' · change';
-    $('cstatus').textContent=DB?'🟢 Live: everyone here can see these messages':'📱 Chat on this device only (shared chat is not connected yet)';
+    $('cstatus').textContent=DB?'🟢 Live: family chat, only people with the password can read it':'📱 Chat on this device only (shared chat is not connected yet)';
+    if(DB&&!code){const d=document.createElement('div');d.className='mnone';d.textContent='🔒 Family chat. Enter your name and the family password to join.';$('msgs').replaceChildren(d);sig='locked'}
   };
   const draw=()=>{
     const box=$('msgs'),near=box.scrollHeight-box.scrollTop-box.clientHeight<80;
@@ -443,9 +451,11 @@ const CHAT_DB='https://main-pc.tail94e406.ts.net';
     if(near)box.scrollTop=box.scrollHeight;
   };
   async function load(){
+    if(DB&&!code)return;
     try{
       if(DB){
-        const r=await fetch(DB+'/messages.json?orderBy=%22%24key%22&limitToLast=100',{cache:'no-store'});
+        const r=await fetch(DB+'/messages.json?orderBy=%22%24key%22&limitToLast=100',{cache:'no-store',headers:hdr()});
+        if(r.status===401){lockOut('🔒 Wrong family password, try again');return}
         if(!r.ok)throw 0;
         const o=await r.json()||{};
         msgs=Object.keys(o).sort().map(k=>o[k]).filter(m=>m&&(typeof m.text==='string'||m.img));
@@ -455,13 +465,15 @@ const CHAT_DB='https://main-pc.tail94e406.ts.net';
     if(s!==sig){sig=s;draw()}
   }
   $('nf').onsubmit=e=>{e.preventDefault();const n=$('uname').value.trim().slice(0,24);if(!n)return;
-    uname=n;try{localStorage.setItem(NK,uname)}catch{}ui()};
+    uname=n;try{localStorage.setItem(NK,uname)}catch{}
+    if(DB){code=$('fcode').value.trim();if(!code)return;try{localStorage.setItem(FK,code)}catch{}}
+    $('fcode').value='';sig='';ui();load()};
   $('rename').onclick=()=>{uname='';$('uname').value='';ui();$('uname').focus()};
   async function send(text,img){
     if(Date.now()-lastSend<1000)return;lastSend=Date.now();
     const m={name:uname,text,t:Date.now(),uid};if(img)m.img=img;
     msgs.push(m);sig='';draw();$('msgs').scrollTop=$('msgs').scrollHeight;
-    if(DB){try{await fetch(DB+'/messages.json',{method:'POST',body:JSON.stringify(m)})}catch{}load()}
+    if(DB){try{const r=await fetch(DB+'/messages.json',{method:'POST',headers:hdr(),body:JSON.stringify(m)});if(r.status===401)return lockOut('🔒 Wrong family password, try again')}catch{}load()}
     else{try{localStorage.setItem(MK,JSON.stringify(msgs.slice(-40)))}catch{}}
   }
   $('mf').onsubmit=e=>{e.preventDefault();const text=$('mtext').value.trim().slice(0,300);if(!text)return;$('mtext').value='';send(text,'')};
