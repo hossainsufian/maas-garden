@@ -366,7 +366,7 @@ dialog{max-height:90vh;overflow:auto}
 <script>
 const KEY='mothers-garden-v1';
 setTimeout(()=>document.body.classList.remove('intro-wait'),4500); // safety: never leave the page hidden
-const API='https://main-pc.tail94e406.ts.net';   // the garden server (chat + plant list)
+const API='https://server-pc.tail94e406.ts.net';   // the garden server (chat + plant list)
 const PK=KEY+'-plants-cache';
 let plants=[];try{plants=JSON.parse(localStorage.getItem(PK)||'[]')}catch{}
 /* fallback list, used only if the garden server and the cache are both unavailable */
