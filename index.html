@@ -1,0 +1,446 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maa's Garden</title>
+<style>
+@property --bg{syntax:'<color>';inherits:true;initial-value:#f3f7ee}
+@property --card{syntax:'<color>';inherits:true;initial-value:#ffffff}
+@property --ink{syntax:'<color>';inherits:true;initial-value:#22301f}
+@property --mute{syntax:'<color>';inherits:true;initial-value:#6b7a66}
+@property --g{syntax:'<color>';inherits:true;initial-value:#3f8f4f}
+@property --line{syntax:'<color>';inherits:true;initial-value:#dde7d6}
+@property --h1{syntax:'<color>';inherits:true;initial-value:#cfe8c6}
+@property --h2{syntax:'<color>';inherits:true;initial-value:#fbe7c6}
+:root{--bg:#f3f7ee;--card:#fff;--ink:#22301f;--mute:#6b7a66;--g:#3f8f4f;--line:#dde7d6;--h1:#cfe8c6;--h2:#fbe7c6;
+  transition:--bg 1.2s,--card 1.2s,--ink 1s,--mute 1s,--g 1.2s,--line 1.2s,--h1 1.6s,--h2 1.6s}
+@media (prefers-color-scheme:dark){:root{--bg:#141b13;--card:#1e281c;--ink:#e6efe2;--mute:#93a58d;--g:#5fb36f;--line:#2c3a29;--h1:#1f3a22;--h2:#3a2f1a}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+section,footer{scroll-margin-top:70px}
+.wrap{max-width:1040px;margin:auto;padding:0 18px}
+input,select,textarea,button{font:inherit;color:inherit}
+input,select,textarea{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);width:100%}
+button,.btn{padding:11px 20px;border:0;border-radius:99px;background:var(--g);color:#fff;cursor:pointer;font-weight:600;text-decoration:none;display:inline-block}
+button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line)}
+button.danger{background:transparent;color:#c0392b;border:1px solid var(--line)}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:20px;padding:12px 18px;backdrop-filter:blur(12px);background:color-mix(in srgb,var(--bg) 80%,transparent);border-bottom:1px solid var(--line)}
+.brand{display:inline-block;font-weight:800;font-size:1.15rem}
+.links{display:flex;gap:18px;margin-left:auto}
+.links a{color:var(--ink);text-decoration:none;font-weight:500;opacity:.8}
+.links a:hover{opacity:1;color:var(--g)}
+nav button{padding:8px 16px}
+
+/* hero */
+.hero{position:relative;overflow:hidden;background:linear-gradient(120deg,var(--h1),var(--h2),var(--h1));background-size:240% 240%;animation:flow 14s ease-in-out infinite}
+@keyframes flow{50%{background-position:100% 50%}}
+.hero .b1,.hero .b2{position:absolute;border-radius:50%;filter:blur(50px);opacity:.55;pointer-events:none}
+.hero .b1{width:320px;height:320px;background:var(--g);left:-80px;top:-80px;animation:fl1 9s ease-in-out infinite}
+.hero .b2{width:260px;height:260px;background:var(--h2);right:10%;bottom:-90px;animation:fl1 11s ease-in-out infinite reverse}
+@keyframes fl1{50%{transform:translate(60px,40px) scale(1.2)}}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:center;padding-top:64px;padding-bottom:64px}
+.eyebrow{display:inline-block;padding:4px 12px;border-radius:99px;background:var(--card);font-size:.85rem;font-weight:600;color:var(--g)}
+.hero h1{margin:14px 0 6px;font-size:clamp(2.4rem,6vw,4rem);line-height:1.05;letter-spacing:-.02em}
+.hero #count{margin:0;color:var(--g);font-weight:700}
+.lead{margin:12px 0 22px;color:var(--mute);max-width:46ch}
+.hero-img{aspect-ratio:4/3;border-radius:28px;overflow:hidden;box-shadow:0 20px 50px #0003}
+
+/* image slots: show the picture if present, else a gradient + emoji */
+.slot{position:relative;background:linear-gradient(135deg,var(--h1),var(--g));overflow:hidden}
+.slot::before{content:attr(data-e);position:absolute;inset:0;display:grid;place-items:center;font-size:3.5rem;opacity:.7}
+.slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s}
+.slot:hover img{transform:scale(1.07)}
+
+h2.sec{font-size:clamp(1.6rem,3.4vw,2.2rem);margin:0 0 18px;letter-spacing:-.01em}
+.block{padding:56px 0}
+.gal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:170px;gap:12px}
+.gal figure{margin:0;border-radius:18px}
+.gal figure:nth-child(1){grid-column:span 2;grid-row:span 2}
+.gal figure:nth-child(4){grid-row:span 2}
+.gal figure:nth-child(5){grid-column:span 2}
+
+.story{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start}
+.maa{margin:0;aspect-ratio:3/4;border-radius:26px;box-shadow:0 16px 40px #0003}
+.maa img{object-position:50% 25%}
+.maa figcaption{position:absolute;left:0;right:0;bottom:0;padding:28px 16px 14px;color:#fff;font-weight:700;font-size:1.1rem;background:linear-gradient(transparent,#000a)}
+.about{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+@media(max-width:760px){.story{grid-template-columns:1fr}.maa{max-width:320px}}
+.about>div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px}
+.about h4{margin:0 0 8px;font-size:1.05rem}
+.about p{margin:0;color:var(--mute);line-height:1.6}
+
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.bar input{flex:1;min-width:150px;width:auto}
+.bar select{width:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:opacity .6s,transform .6s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.card:hover{box-shadow:0 12px 30px #0002}
+.card img,.ph{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;background:var(--line)}
+.ph{display:grid;place-items:center;font-size:3rem}
+.card div.b{padding:12px}
+.card h3{margin:0;font-size:1.05rem}
+.card small{color:var(--mute)}
+.tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:99px;background:var(--line);font-size:.8rem}
+.tag.due{background:#f6d7a8;color:#6a4300}
+.vote{display:flex;gap:6px;margin-top:10px}
+#gvote{margin-top:16px}
+.vote button{padding:5px 12px;background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:600;font-size:.9rem;transition:transform .15s,background .2s}
+.vote button:hover{transform:scale(1.08)}
+.vote button.on{background:var(--g);color:#fff;border-color:var(--g)}
+.vote button[data-v=down].on{background:#c0392b;border-color:#c0392b}
+#clist{max-height:260px;overflow:auto;margin-bottom:12px}
+.cm{padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:flex-start}
+.cm div{flex:1;overflow-wrap:anywhere}
+.cm b{display:block;font-size:.85rem}
+.cm small{color:var(--mute)}
+.cm button{padding:2px 8px;background:transparent;color:var(--mute);border:0;font-size:.8rem}
+.cnone{color:var(--mute);padding:8px 0}
+.empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:40px 0}
+footer{margin-top:40px;padding:32px 0 60px;border-top:1px solid var(--line);text-align:center;color:var(--mute)}
+.foot{margin:0}
+.credit{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:.85rem}
+
+dialog{border:0;border-radius:18px;padding:20px;width:min(440px,92vw);background:var(--card);color:var(--ink)}
+dialog::backdrop{background:#0008}
+dialog label{display:block;margin:10px 0 4px;color:var(--mute);font-size:.85rem}
+dialog .row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
+#prev{width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-top:8px}
+
+@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}.links{display:none}  .gal{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}.gal figure:nth-child(n){grid-column:auto;grid-row:auto}.gal figure:nth-child(1){grid-column:span 2}}
+
+/* ---- build-in animations (different pattern per element) ---- */
+[data-a]{transition:opacity .55s,transform .7s cubic-bezier(.2,.8,.2,1),clip-path .9s cubic-bezier(.6,0,.2,1)}
+.pre{opacity:0!important}
+.pre.a-up{transform:translateY(24px)}
+.pre.a-left{transform:translateX(-50px)}
+.pre.a-right{transform:translateX(50px)}
+.pre.a-zoom{transform:scale(.5)}
+.pre.a-flip{transform:perspective(600px) rotateX(75deg)}
+.pre.a-wipe{opacity:1!important;clip-path:inset(0 100% 0 0)}
+[data-a]:not(.pre).a-wipe{clip-path:inset(0 0 0 0)}
+
+/* ---- cursors ---- */
+#curs{position:absolute;top:0;left:0;width:100%;height:0;z-index:90;pointer-events:none}
+.cur{position:absolute;left:0;top:0;transition:transform .38s cubic-bezier(.4,.1,.2,1)}
+.cur svg{width:24px;height:24px;filter:drop-shadow(0 2px 3px #0006);display:block}
+.cur span{position:absolute;left:18px;top:20px;padding:2px 8px;border-radius:99px;color:#fff;font:600 11px system-ui;white-space:nowrap}
+.ring{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid;animation:ring .6s ease-out forwards;pointer-events:none}
+@keyframes ring{to{transform:scale(5);opacity:0}}
+#prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#2f9e44,#f59f00,#e8590c,#ae3ec9,#1c7ed6);z-index:99;transition:width .3s}
+#skip{position:fixed;right:14px;bottom:14px;z-index:99;background:#000a;font-size:.85rem;padding:8px 14px}
+</style>
+</head>
+<body>
+<div id="prog"></div>
+<div id="curs"></div>
+<div id="site">
+<nav>
+  <span class="brand">🌿 Maa's Garden</span>
+  <div class="links"><a href="#gallery">Gallery</a><a href="#story">Our story</a><a href="#plants">Plants</a></div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="b1"></div><div class="b2"></div>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Grown with love</span>
+      <h1>Maa's Garden</h1>
+      <p id="count"></p>
+      <p class="lead">A living collection of flowers, herbs and trees, tended every day by hand.</p>
+      <a class="btn" href="#plants">Meet the plants</a>
+      <div class="vote" id="gvote" data-id="garden" title="What do you think of Maa's garden?"></div>
+    </div>
+    <div class="hero-img slot" data-e="🌺"><img src="images/hero.jpg" alt="The garden" onerror="this.remove()"></div>
+  </div>
+</header>
+
+<section class="block" id="gallery"><div class="wrap">
+  <h2 class="sec">Gallery</h2>
+  <div class="gal">
+    <figure class="slot" data-e="🌷"><img src="images/gallery-1.jpg" alt="" onerror="this.remove()"></figure>
+    <figure class="slot" data-e="🌿"><img src="images/gallery-2.jpg" alt="" onerror="this.remove()"></figure>
+    <figure class="slot" data-e="🌻"><img src="images/gallery-3.jpg" alt="" onerror="this.remove()"></figure>
+    <figure class="slot" data-e="🪴"><img src="images/gallery-4.jpg" alt="" onerror="this.remove()"></figure>
+    <figure class="slot" data-e="🌹"><img src="images/gallery-5.jpg" alt="" onerror="this.remove()"></figure>
+    <figure class="slot" data-e="🍃"><img src="images/gallery-6.jpg" alt="" onerror="this.remove()"></figure>
+  </div>
+</div></section>
+
+<section class="block" id="story"><div class="wrap">
+  <h2 class="sec">Our story</h2>
+  <div class="story">
+  <figure class="maa slot" data-e="👩‍🌾"><img src="images/maa.jpg" alt="Maa, who tends the garden" onerror="this.remove()"><figcaption>Maa</figcaption></figure>
+  <div class="about">
+    <div><h4>🎨 Her style</h4><p>Some days her garden is fancy: bright blooms, painted pots and flowers in full colour. Other days it is calm and minimal, with simple green leaves and room to breathe. Both moods are hers, and both feel like home.</p></div>
+    <div><h4>👩‍🏫 Her work</h4><p>She is a teacher at a government school, and she truly loves to teach. Beyond the classroom, she tends her plants with her own hands, from rooftop flowers to vegetables in recycled crates, and she cooks delicious food for her family. Teaching, growing and cooking: three ways she cares for the people and the world around her.</p></div>
+    <div><h4>🚀 Ambition</h4><p>To stay healthy and to live well. Every plant here grows toward that: fresh greens for the table, cleaner air to breathe, and quiet mornings that keep the heart light.</p></div>
+  </div>
+  </div>
+</div></section>
+
+<section class="block" id="plants"><div class="wrap">
+  <h2 class="sec">The plants</h2>
+  <div class="bar">
+    <input id="q" placeholder="Search plants…">
+    <select id="loc"><option value="">All spots</option></select>
+  </div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<footer><div class="wrap"><p class="foot">Made with love for Maa · every plant, every season 🌱</p>
+<p class="foot credit">© 2026 Volt Code. All rights reserved. · Made by Sufian Hossain</p></div></footer>
+
+<dialog id="cdlg">
+  <h3 id="ct" style="margin:0 0 10px">Comments</h3>
+  <div id="clist"></div>
+  <form id="cf">
+    <input id="cname" placeholder="Your name" maxlength="40" style="margin-bottom:8px">
+    <textarea id="ctext" rows="2" maxlength="500" placeholder="Write a comment…" required></textarea>
+    <div class="row"><button type="button" class="ghost" id="cclose">Close</button><button type="submit">Post</button></div>
+  </form>
+</dialog>
+
+<dialog id="dlg">
+  <form method="dialog" id="f">
+    <h2 id="dt" style="margin:0 0 4px">Add plant</h2>
+    <label>Photo</label>
+    <input type="file" id="photo" accept="image/*">
+    <img id="prev" hidden alt="">
+    <label>Name</label><input id="name" required>
+    <label>Where in the garden</label><input id="where" placeholder="e.g. Rooftop, front yard, balcony" list="spots">
+    <datalist id="spots"></datalist>
+    <label>Water every (days)</label><input id="every" type="number" min="1" placeholder="e.g. 3">
+    <label>Last watered</label><input id="last" type="date">
+    <label>Notes</label><textarea id="notes" rows="3" placeholder="Flowers in winter, needs sun…"></textarea>
+    <div class="row">
+      <button type="button" class="danger" id="del" hidden>Delete</button>
+      <button type="button" class="ghost" id="cancel">Cancel</button>
+      <button type="submit">Save</button>
+    </div>
+  </form>
+</dialog>
+</div>
+<button id="skip">Skip ›</button>
+
+<script>
+const KEY='mothers-garden-v1';
+let plants=[];try{plants=JSON.parse(localStorage.getItem(KEY)||'[]')}catch{}
+/* starter plants from the photos Maa sent (names are best guesses — edit any card to correct them) */
+{
+  const S=[['Moss rose (Portulaca)','Rooftop','photo-26.jpg','Bright pink flowers that open in the sun.'],
+    ['Gerbera daisy','Rooftop','photo-30.jpg','Soft pink petals, loves morning light.'],
+    ['Desert rose (Adenium)','Rooftop','photo-29.jpg','Pink trumpet flowers on a thick stem.'],
+    ['Red amaranth (Lal shak)','Rooftop','photo-12.jpg','Leafy greens grown in a big pot.'],
+    ['Croton bush','Rooftop','photo-5.jpg','Colourful leaves in green, yellow and red.'],
+    ['Vegetable crates','Rooftop','photo-15.jpg','Seedlings growing in recycled crates.'],
+    ['Hanging pots','Rooftop wall','photo-6.jpg','Pink and yellow pots hung along the wall.'],
+    ['Palm & dracaena corner','Rooftop','photo-25.jpg','Tall leafy plants beside the blue drum.'],
+    ['Balcony greens (Dieffenbachia)','Balcony','photo-balcony-1.jpg','Big patterned leaves in bright green and yellow pots.'],
+    ['Anthurium & dieffenbachia','Balcony','photo-balcony-2.jpg','Indoor corner by the window with red anthurium flowers.']];
+  let seen=[];try{seen=JSON.parse(localStorage.getItem(KEY+'-seen')||'[]')}catch{}
+  S.forEach(([name,where,photo,notes],i)=>{if(seen.includes(photo))return;seen.push(photo);
+    if(!plants.some(p=>p.photo==='images/'+photo))plants.push({id:Date.now()+i,name,where,every:'',last:'',notes,photo:'images/'+photo})});
+  try{localStorage.setItem(KEY,JSON.stringify(plants));localStorage.setItem(KEY+'-seen',JSON.stringify(seen))}catch{}
+}
+const $=id=>document.getElementById(id);
+let editing=null,photoData='';
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(plants))}catch{alert('Storage full — try smaller photos or delete some.')}};
+const daysSince=d=>Math.floor((Date.now()-new Date(d))/864e5);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* likes / dislikes (saved in this browser) */
+const VK=KEY+'-votes';let votes={};try{votes=JSON.parse(localStorage.getItem(VK)||'{}')}catch{}
+const CK=KEY+'-comments';let comments={};try{comments=JSON.parse(localStorage.getItem(CK)||'{}')}catch{}
+const saveC=()=>{try{localStorage.setItem(CK,JSON.stringify(comments))}catch{}};
+const voteHtml=id=>{const v=votes[id]||{up:0,down:0,mine:''};const n=(comments[id]||[]).length;
+  return `<button data-v="up" class="${v.mine==='up'?'on':''}" aria-label="Like">👍 ${v.up}</button><button data-v="down" class="${v.mine==='down'?'on':''}" aria-label="Dislike">👎 ${v.down}</button><button data-c="1" aria-label="Comments">💬 ${n}</button>`};
+let cid=null;
+function renderComments(){
+  const l=comments[cid]||[];
+  $('clist').innerHTML=l.length?l.map((c,i)=>`<div class="cm"><div><b>${esc(c.name||'Guest')}</b>${esc(c.text)}<br><small>${new Date(c.t).toLocaleDateString()}</small></div><button data-d="${i}" aria-label="Delete comment">✕</button></div>`).join(''):'<div class="cnone">No comments yet. Be the first 🌸</div>';
+}
+function openComments(id,title){cid=id;$('ct').textContent='💬 '+title;$('ctext').value='';try{$('cname').value=localStorage.getItem(KEY+'-name')||''}catch{};renderComments();$('cdlg').showModal()}
+$('cclose').onclick=()=>$('cdlg').close();
+$('cf').onsubmit=e=>{e.preventDefault();
+  const name=$('cname').value.trim(),text=$('ctext').value.trim();if(!text)return;
+  try{localStorage.setItem(KEY+'-name',name)}catch{}
+  (comments[cid]=comments[cid]||[]).push({name,text,t:Date.now()});saveC();$('ctext').value='';renderComments();render()};
+$('clist').onclick=e=>{const b=e.target.closest('[data-d]');if(!b)return;comments[cid].splice(+b.dataset.d,1);saveC();renderComments();render()};
+function castVote(id,dir){
+  const v=votes[id]=votes[id]||{up:0,down:0,mine:''};
+  if(v.mine)v[v.mine]--;
+  if(v.mine===dir)v.mine='';else{v.mine=dir;v[dir]++}
+  try{localStorage.setItem(VK,JSON.stringify(votes))}catch{}
+}
+function renderGarden(){$('gvote').innerHTML=voteHtml('garden')}
+$('gvote').onclick=e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.c)return openComments('garden',"Maa's Garden");
+  castVote('garden',b.dataset.v);renderGarden()};
+function render(){
+  renderGarden();
+  const spots=[...new Set(plants.map(p=>p.where).filter(Boolean))].sort();
+  const cur=$('loc').value;
+  $('loc').innerHTML='<option value="">All spots</option>'+spots.map(s=>`<option ${s===cur?'selected':''}>${esc(s)}</option>`).join('');
+  $('spots').innerHTML=spots.map(s=>`<option value="${esc(s)}">`).join('');
+  const q=$('q').value.toLowerCase(),loc=$('loc').value;
+  const list=plants.filter(p=>(!loc||p.where===loc)&&(!q||(p.name+' '+p.notes+' '+p.where).toLowerCase().includes(q)));
+  $('count').textContent=plants.length+' plant'+(plants.length==1?'':'s')+' growing';
+  $('grid').innerHTML=list.length?list.map(p=>{
+    let tag='';
+    if(p.every&&p.last){const left=p.every-daysSince(p.last);tag=left<=0?`<span class="tag due">💧 Water now</span>`:`<span class="tag">💧 in ${left}d</span>`}
+    return `<div class="card" data-id="${p.id}">${p.photo?`<img src="${p.photo}" alt="${esc(p.name)}">`:'<div class="ph">🪴</div>'}
+    <div class="b"><h3>${esc(p.name)}</h3><small>${esc(p.where)}</small><br>${tag}<div class="vote" data-id="${p.id}">${voteHtml(p.id)}</div></div></div>`}).join('')
+    :`<div class="empty">${plants.length?'No matches.':'No plants to show yet 🌱'}</div>`;
+}
+function openDlg(p){
+  editing=p?p.id:null;photoData=p?.photo||'';
+  $('dt').textContent='Edit plant';
+  $('name').value=p?.name||'';$('where').value=p?.where||'';$('every').value=p?.every||'';
+  $('last').value=p?.last||'';$('notes').value=p?.notes||'';$('photo').value='';
+  $('prev').hidden=!photoData;$('prev').src=photoData;$('del').hidden=!p;
+  $('dlg').showModal();
+}
+function shrink(file){return new Promise(res=>{
+  const img=new Image(),r=new FileReader();
+  r.onload=()=>{img.onload=()=>{const m=800,s=Math.min(1,m/Math.max(img.width,img.height));
+    const c=document.createElement('canvas');c.width=img.width*s;c.height=img.height*s;
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.75))};img.src=r.result};
+  r.readAsDataURL(file)})}
+$('photo').onchange=async e=>{const f=e.target.files[0];if(!f)return;photoData=await shrink(f);$('prev').src=photoData;$('prev').hidden=false};
+$('cancel').onclick=()=>$('dlg').close();
+$('grid').onclick=e=>{
+  const vb=e.target.closest('.vote button');
+  if(vb&&vb.dataset.c){const id=vb.closest('.vote').dataset.id;openComments(id,(plants.find(p=>p.id==id)||{}).name||'Plant');return}
+  if(vb){castVote(vb.closest('.vote').dataset.id,vb.dataset.v);vb.closest('.vote').innerHTML=voteHtml(vb.closest('.vote').dataset.id);return}
+  const c=e.target.closest('.card');if(c)openDlg(plants.find(p=>p.id==c.dataset.id))};
+$('f').onsubmit=()=>{
+  const d={name:$('name').value.trim(),where:$('where').value.trim(),every:+$('every').value||'',last:$('last').value,notes:$('notes').value.trim(),photo:photoData};
+  if(editing){Object.assign(plants.find(p=>p.id==editing),d)}else plants.unshift({id:Date.now(),...d});
+  save();render();
+};
+$('del').onclick=()=>{if(confirm('Delete this plant?')){plants=plants.filter(p=>p.id!=editing);save();$('dlg').close();render()}};
+$('q').oninput=$('loc').onchange=render;
+render();
+
+/* ================= self-building intro: 5 cursors build the site in parallel ================= */
+(async()=>{
+  let skipped=false;
+  const root=document.documentElement,body=document.body;
+  const $$=s=>[...document.querySelectorAll(s)];
+  const sleep=ms=>new Promise(r=>setTimeout(r,skipped?0:ms));
+  const stop=e=>e.preventDefault();
+  addEventListener('wheel',stop,{passive:false});addEventListener('touchmove',stop,{passive:false});addEventListener('keydown',stop);
+  $('skip').onclick=()=>{skipped=true};
+
+  /* everything that gets built */
+  const SEL='.brand,.links a,.eyebrow,.hero h1,#count,.lead,.hero .btn,.hero-img,#gallery h2,.gal figure,#story h2,.maa,.about>div,#plants h2,.bar>*,.card,.empty,.foot';
+  const T=$$(SEL);
+  const A=['a-left','a-right','a-zoom','a-flip','a-up','a-wipe'];
+  T.forEach((e,i)=>{
+    const txt=e.matches('h1,h2,p,.eyebrow,.brand,.foot');
+    if(e.matches('.about>div'))e.classList.add('a-up');
+    e.dataset.a='';
+    e.classList.add('pre',txt?'a-up':e.classList.contains('hero-img')?'a-wipe':A[i%A.length]);
+  });
+  const phs=$$('.about textarea').map(t=>[t,t.placeholder]);phs.forEach(([t])=>t.placeholder='');
+  let done=0;const show=el=>{if(!el.classList.contains('pre'))return;el.classList.remove('pre');$('prog').style.width=Math.min(100,++done/T.length*100)+'%'};
+
+  /* colour director: morphs the whole palette like a video colour-grade */
+  const setVars=o=>Object.entries(o).forEach(([k,v])=>root.style.setProperty(k,v));
+  setVars({'--bg':'#ffffff','--card':'#f4f4f4','--ink':'#8a8a8a','--mute':'#b5b5b5','--g':'#aaaaaa','--line':'#e8e8e8','--h1':'#eeeeee','--h2':'#dddddd'});
+  const stages=[
+    {'--bg':'#fff8e7','--g':'#e8a317','--h1':'#ffe29a','--h2':'#ffb88c'},
+    {'--bg':'#fff0ee','--g':'#e8590c','--h1':'#ffc2a1','--h2':'#ff8fab','--ink':'#3a2a2a'},
+    {'--bg':'#eaf6ff','--g':'#1c7ed6','--h1':'#a5d8ff','--h2':'#96f2d7','--ink':'#1e2b3a'},
+    {'--bg':'#f6eeff','--g':'#ae3ec9','--h1':'#d0bfff','--h2':'#ffc9f0','--ink':'#2c2238'},
+    {'--bg':'#eef7e8','--g':'#2f9e44','--h1':'#b2f2bb','--h2':'#fff3bf','--ink':'#22301f'}
+  ];
+  let building=true;
+  (async()=>{for(const s of stages){if(!building)return;setVars(s);await sleep(2300)}})();
+
+  /* five cursors */
+  const curBox=$('curs');
+  const ring=(x,y,c)=>{const r=document.createElement('i');r.className='ring';r.style.cssText=`left:${x}px;top:${y}px;border-color:${c}`;curBox.append(r);setTimeout(()=>r.remove(),700)};
+  class Cur{
+    constructor(color,name,x,y){this.c=color;this.x=x;this.y=y;
+      this.el=document.createElement('div');this.el.className='cur';
+      this.el.innerHTML=`<svg viewBox="0 0 24 24"><path d="M4 2l16 9-7 2-3 7z" fill="${color}" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg><span style="background:${color}">${name}</span>`;
+      curBox.append(this.el);this.pos(x,y)}
+    pos(x,y){this.x=x;this.y=y;this.el.style.transform=`translate(${x}px,${y}px)`}
+    async to(el){const r=el.getBoundingClientRect();
+      this.pos(r.left+scrollX+Math.min(r.width/2,140),r.top+scrollY+Math.min(r.height/2,26));
+      await sleep(420);ring(this.x,this.y,this.c)}
+    async pop(el){await this.to(el);show(el);await sleep(90)}
+    async type(el,sp=13){
+      const t=el.textContent;el.style.minHeight=el.offsetHeight+'px';el.textContent='';
+      await this.to(el);show(el);
+      for(const ch of Array.from(t)){el.textContent+=ch;
+        const g=document.createRange();g.selectNodeContents(el);const b=g.getBoundingClientRect();
+        this.pos(b.right+scrollX+4,b.top+scrollY+b.height/2);await sleep(sp)}
+      el.style.minHeight='';await sleep(60)}
+    async typePh(ta,txt){await this.to(ta);for(const ch of Array.from(txt)){ta.placeholder+=ch;await sleep(6)}}
+  }
+  const W=innerWidth;
+  const [c0,c1,c2,c3,c4]=[['#2f9e44','Design',80,160],['#e8590c','Words',W-120,220],['#1c7ed6','Photos',W/2,300],['#ae3ec9','Colour',160,420],['#f59f00','Plants',W-200,480]].map(a=>new Cur(...a));
+  const q=s=>$$(s);
+
+  /* camera: gently follows the cursors down the page */
+  const cam=setInterval(()=>{const ys=[c0,c1,c2,c3,c4].map(c=>c.y);const avg=ys.reduce((a,b)=>a+b)/5;
+    window.scrollTo({top:Math.max(0,avg-innerHeight*.5),behavior:'smooth'})},450);
+
+  await sleep(500);
+  const tasks=[
+    (async()=>{ // Design: nav + hero
+      await c0.type(q('.brand')[0]);
+      for(const a of q('.links a'))await c0.pop(a);
+      await c0.type(q('.eyebrow')[0]);await c0.type(q('.hero h1')[0],30);
+      await c0.type($('count'));await c0.type(q('.lead')[0],9);
+      await c0.pop(q('.hero .btn')[0]);await c0.pop(q('.hero-img')[0]);
+    })(),
+    (async()=>{ // Words: story
+      await sleep(900);
+      await c1.type(q('#story h2')[0]);
+      await c1.pop(q('.maa')[0]);
+      for(const d of q('.about>div')){show(d);await c1.to(d);
+        await c1.type(d.querySelector('h4'));
+        await c1.type(d.querySelector('p'),7)}
+    })(),
+    (async()=>{ // Photos: gallery
+      await sleep(500);
+      await c2.type(q('#gallery h2')[0]);
+      for(const f of q('.gal figure'))await c2.pop(f);
+    })(),
+    (async()=>{ // Colour: plants header + toolbar + footer
+      await sleep(1400);
+      await c3.type(q('#plants h2')[0]);
+      for(const b of q('.bar>*'))await c3.pop(b);
+      for(const f of q('.foot'))await c3.type(f,10);
+    })(),
+    (async()=>{ // Plants: the cards
+      await sleep(1800);
+      for(const c of q('.card,.empty'))await c4.pop(c);
+    })()
+  ];
+  try{await Promise.all(tasks)}catch(e){}
+
+  /* finish: settle colours, scroll back to the top, hand over */
+  building=false;clearInterval(cam);skipped=false;
+  T.forEach(e=>{e.classList.remove('pre')});
+  phs.forEach(([t,p])=>t.placeholder=p);
+  $('prog').style.width='100%';
+  root.removeAttribute('style');
+  await sleep(500);
+  window.scrollTo({top:0,behavior:'smooth'});
+  await sleep(1200);
+  curBox.style.transition='opacity .5s';curBox.style.opacity=0;
+  removeEventListener('wheel',stop);removeEventListener('touchmove',stop);removeEventListener('keydown',stop);
+  $('skip').remove();$('prog').style.opacity=0;
+  setTimeout(()=>{curBox.remove();$('prog').remove()},700);
+})();
+</script>
+</body>
+</html>
