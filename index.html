@@ -60,7 +60,7 @@ h2.sec{font-size:clamp(1.6rem,3.4vw,2.2rem);margin:0 0 18px;letter-spacing:-.01e
 .gal{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:170px;gap:12px}
 .gal figure{margin:0;border-radius:18px}
 .gal figure:nth-child(1){grid-column:span 2;grid-row:span 2}
-.gal figure:nth-child(4){grid-row:span 2}
+.gal figure:nth-child(4),.gal figure:nth-child(6){grid-column:span 2}
 .gal figure:nth-child(5){grid-column:span 2}
 
 .story{display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start}
@@ -110,7 +110,7 @@ dialog label{display:block;margin:10px 0 4px;color:var(--mute);font-size:.85rem}
 dialog .row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 #prev{width:100%;max-height:220px;object-fit:cover;border-radius:12px;margin-top:8px}
 
-@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}.links{display:none}  .gal{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}.gal figure:nth-child(n){grid-column:auto;grid-row:auto}.gal figure:nth-child(1){grid-column:span 2}}
+@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}.links{display:none}  .gal{grid-template-columns:repeat(2,1fr);grid-auto-rows:140px}.gal figure:nth-child(n){grid-column:auto;grid-row:auto}.gal figure:nth-child(1),.gal figure:nth-child(6){grid-column:span 2}}
 
 /* ---- build-in animations (different pattern per element) ---- */
 [data-a]{transition:opacity .55s,transform .7s cubic-bezier(.2,.8,.2,1),clip-path .9s cubic-bezier(.6,0,.2,1)}
@@ -130,6 +130,36 @@ dialog .row{display:flex;gap:8px;margin-top:16px;justify-content:flex-end}
 .cur span{position:absolute;left:18px;top:20px;padding:2px 8px;border-radius:99px;color:#fff;font:600 11px system-ui;white-space:nowrap}
 .ring{position:absolute;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;border:2px solid;animation:ring .6s ease-out forwards;pointer-events:none}
 @keyframes ring{to{transform:scale(5);opacity:0}}
+/* ---- responsive: phone → tablet → laptop → big screens ---- */
+dialog{max-height:90vh;overflow:auto}
+.vote{flex-wrap:wrap}
+@media(min-width:1280px){.wrap{max-width:1200px}.grid{grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}.gal{grid-auto-rows:200px}}
+@media(min-width:1800px){html{font-size:18px}.wrap{max-width:1440px}.gal{grid-auto-rows:240px}}
+.gal figure:nth-child(4) img{object-position:50% 30%}
+@media(max-width:900px){.story{grid-template-columns:1fr}.maa{max-width:260px}.hero .wrap{gap:20px}}
+@media(max-width:760px){
+  nav{flex-wrap:wrap;gap:4px 14px;padding:10px 14px}
+  .links{display:flex;order:3;width:100%;margin-left:0;gap:18px;overflow-x:auto;scrollbar-width:none}
+  .links::-webkit-scrollbar{display:none}
+  .links a{white-space:nowrap;padding:4px 0}
+  section,footer{scroll-margin-top:96px}
+  .hero .wrap{padding-top:32px;padding-bottom:36px}
+  .hero h1{font-size:clamp(2.2rem,11vw,3rem)}
+  .block{padding:36px 0}
+  .story{grid-template-columns:1fr}
+  .maa{max-width:300px;width:100%;margin:0 auto}
+  .bar{flex-direction:column}
+  .bar input,.bar select{width:100%}
+  .grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card h3{font-size:.95rem}
+  .card div.b{padding:10px}
+  .card .vote button{padding:5px 9px;font-size:.8rem}
+  dialog .row{flex-wrap:wrap}
+  #skip{bottom:10px;right:10px}
+}
+@media(max-width:340px){.grid{grid-template-columns:1fr}.gal{grid-auto-rows:110px}}
+@media(pointer:coarse){button,.btn{min-height:42px}.vote button{min-height:36px}.links a{padding:8px 0}}
+@media(prefers-reduced-motion:reduce){.hero,.hero .b1,.hero .b2{animation:none}html{scroll-behavior:auto}}
 #prog{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,#2f9e44,#f59f00,#e8590c,#ae3ec9,#1c7ed6);z-index:99;transition:width .3s}
 #skip{position:fixed;right:14px;bottom:14px;z-index:99;background:#000a;font-size:.85rem;padding:8px 14px}
 </style>
@@ -328,6 +358,7 @@ render();
 
 /* ================= self-building intro: 5 cursors build the site in parallel ================= */
 (async()=>{
+  if(/nointro/.test(location.search)){$('skip').remove();$('prog').remove();$('curs').remove();return}
   let skipped=false;
   const root=document.documentElement,body=document.body;
   const $$=s=>[...document.querySelectorAll(s)];
