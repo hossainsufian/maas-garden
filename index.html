@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Maa's Garden</title>
+<meta name="theme-color" content="#2f9e44">
+<meta name="description" content="Maa's rooftop garden: photos, plants and a chat for everyone who loves it.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Maa's Garden">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="images/icon-192.png">
+<link rel="apple-touch-icon" href="images/icon-180.png">
 <style>
 @property --bg{syntax:'<color>';inherits:true;initial-value:#f3f7ee}
 @property --card{syntax:'<color>';inherits:true;initial-value:#ffffff}
@@ -17,6 +25,7 @@
   transition:--bg 1.2s,--card 1.2s,--ink 1s,--mute 1s,--g 1.2s,--line 1.2s,--h1 1.6s,--h2 1.6s}
 @media (prefers-color-scheme:dark){:root{--bg:#141b13;--card:#1e281c;--ink:#e6efe2;--mute:#93a58d;--g:#5fb36f;--line:#2c3a29;--h1:#1f3a22;--h2:#3a2f1a}}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html{scroll-behavior:smooth}
 body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
 section,footer{scroll-margin-top:70px}
@@ -99,6 +108,29 @@ h2.sec{font-size:clamp(1.6rem,3.4vw,2.2rem);margin:0 0 18px;letter-spacing:-.01e
 .cm small{color:var(--mute)}
 .cm button{padding:2px 8px;background:transparent;color:var(--mute);border:0;font-size:.8rem}
 .cnone{color:var(--mute);padding:8px 0}
+#install{padding:8px 16px;background:var(--card);color:var(--g);border:1px solid var(--g)}
+.chatbox{display:flex;flex-direction:column;height:min(72vh,580px);background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.chathead{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);font-size:.85rem;color:var(--mute)}
+.chathead button{padding:4px 12px;font-size:.8rem}
+#msgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
+.m{max-width:80%;padding:8px 13px;border-radius:18px 18px 18px 4px;background:var(--line);align-self:flex-start;overflow-wrap:anywhere}
+.m.me{align-self:flex-end;background:var(--g);color:#fff;border-radius:18px 18px 4px 18px}
+.m b{display:block;font-size:.75rem;opacity:.8}
+.m small{display:block;opacity:.6;font-size:.68rem;margin-top:2px}
+.mnone{margin:auto;color:var(--mute);text-align:center}
+.chatbox form{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}
+.chatbox form[hidden]{display:none}
+.m img{display:block;max-width:100%;max-height:260px;border-radius:12px;margin-top:6px}
+.ic{padding:0;width:42px;min-width:42px;height:42px;border-radius:50%;font-size:1.15rem;flex:none}
+.emobar{display:flex;flex-wrap:wrap;gap:2px;padding:6px 10px;border-top:1px solid var(--line)}
+.emobar[hidden]{display:none}
+.emobar button{background:transparent;padding:4px 7px;font-size:1.3rem;min-height:0}
+#aimsgs{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:8px;overscroll-behavior:contain}
+.aibox .m{white-space:pre-wrap}
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:6px 10px}
+.chips button{background:var(--card);color:var(--g);border:1px solid var(--line);padding:5px 12px;font-size:.8rem;font-weight:500;min-height:0}
+.ainote{margin:0;padding:6px 12px 10px;font-size:.72rem;color:var(--mute)}
+.chatbox form input{flex:1;border-radius:99px}
 .empty{grid-column:1/-1;text-align:center;color:var(--mute);padding:40px 0}
 footer{margin-top:40px;padding:32px 0 60px;border-top:1px solid var(--line);text-align:center;color:var(--mute)}
 .foot{margin:0}
@@ -140,6 +172,8 @@ dialog{max-height:90vh;overflow:auto}
 @media(max-width:760px){
   nav{flex-wrap:wrap;gap:4px 14px;padding:10px 14px}
   .links{display:flex;order:3;width:100%;margin-left:0;gap:18px;overflow-x:auto;scrollbar-width:none}
+  #install{margin-left:auto;padding:6px 12px;font-size:.85rem}
+  .chatbox{height:min(75vh,560px)}
   .links::-webkit-scrollbar{display:none}
   .links a{white-space:nowrap;padding:4px 0}
   section,footer{scroll-margin-top:96px}
@@ -170,7 +204,8 @@ dialog{max-height:90vh;overflow:auto}
 <div id="site">
 <nav>
   <span class="brand">🌿 Maa's Garden</span>
-  <div class="links"><a href="#gallery">Gallery</a><a href="#story">Our story</a><a href="#plants">Plants</a></div>
+  <div class="links"><a href="#gallery">Gallery</a><a href="#story">Our story</a><a href="#plants">Plants</a><a href="#chat">Chat</a><a href="#ai">Plant Helper</a></div>
+  <button id="install" hidden>⬇ Install app</button>
 </nav>
 
 <header class="hero" id="top">
@@ -219,6 +254,29 @@ dialog{max-height:90vh;overflow:auto}
     <select id="loc"><option value="">All spots</option></select>
   </div>
   <div class="grid" id="grid"></div>
+</div></section>
+
+<section class="block" id="chat"><div class="wrap">
+  <h2 class="sec">Garden chat</h2>
+  <div class="chatbox">
+    <div class="chathead"><span id="cstatus"></span><button type="button" class="ghost" id="rename"></button></div>
+    <div id="msgs" aria-live="polite"></div>
+    <form id="nf"><input id="uname" placeholder="Your name to join the chat" maxlength="24" autocomplete="nickname" required><button type="submit">Join</button></form>
+    <div class="emobar" id="emobar" hidden></div>
+    <form id="mf" hidden><button type="button" class="ghost ic" id="emobtn" aria-label="Emoji">😊</button><button type="button" class="ghost ic" id="attach" aria-label="Send a photo">📎</button><input id="mtext" placeholder="Type a message…" maxlength="300" autocomplete="off"><button type="submit">Send</button></form>
+    <input type="file" id="cphoto" accept="image/*" hidden>
+  </div>
+</div></section>
+
+<section class="block" id="ai"><div class="wrap">
+  <h2 class="sec">Ask the Plant Helper</h2>
+  <div class="chatbox aibox">
+    <div class="chathead"><span>🌱 Free AI for anything about plants and gardening</span></div>
+    <div id="aimsgs" aria-live="polite"></div>
+    <div class="chips" id="chips"></div>
+    <form id="aif"><input id="aitext" placeholder="Ask about watering, pests, yellow leaves…" maxlength="400" autocomplete="off" required><button type="submit" id="aisend">Ask</button></form>
+    <p class="ainote">AI answers can be wrong, so check before acting. Your question is sent to the free Pollinations.ai service, so don't write personal details.</p>
+  </div>
 </div></section>
 
 <footer><div class="wrap"><p class="foot">Made with love for Maa · every plant, every season 🌱</p>
@@ -356,6 +414,106 @@ $('del').onclick=()=>{if(confirm('Delete this plant?')){plants=plants.filter(p=>
 $('q').oninput=$('loc').onchange=render;
 render();
 
+/* ================= garden chat =================
+   Paste your Firebase Realtime Database URL below to make the chat shared by everyone, e.g.
+   const CHAT_DB='https://your-project-default-rtdb.firebaseio.com';
+   Leave it empty and the chat stays on this device only. */
+const CHAT_DB='';
+(()=>{
+  const DB=CHAT_DB.replace(/\/+$/,'');
+  const MK=KEY+'-chat',NK=KEY+'-uname',UK=KEY+'-uid';
+  let uname='',uid='',msgs=[],sig='',lastSend=0;
+  try{uname=localStorage.getItem(NK)||'';uid=localStorage.getItem(UK)||''}catch{}
+  if(!uid){uid=Math.random().toString(36).slice(2)+Date.now().toString(36);try{localStorage.setItem(UK,uid)}catch{}}
+  const ui=()=>{
+    $('nf').hidden=!!uname;$('mf').hidden=!uname;$('rename').hidden=!uname;
+    $('rename').textContent='👤 '+uname+' · change';
+    $('cstatus').textContent=DB?'🟢 Live: everyone here can see these messages':'📱 Chat on this device only (shared chat is not connected yet)';
+  };
+  const draw=()=>{
+    const box=$('msgs'),near=box.scrollHeight-box.scrollTop-box.clientHeight<80;
+    if(!msgs.length){const d=document.createElement('div');d.className='mnone';d.textContent='No messages yet. Say hello 👋';box.replaceChildren(d);return}
+    box.replaceChildren(...msgs.map(m=>{
+      const d=document.createElement('div');d.className='m'+(m.uid===uid?' me':'');
+      const b=document.createElement('b');b.textContent=m.name||'Guest';
+      const t=document.createElement('span');t.textContent=m.text||'';
+      if(typeof m.img==='string'&&m.img.startsWith('data:image/')){const im=document.createElement('img');im.src=m.img;im.alt='Shared photo';t.append(im)}
+      const s=document.createElement('small');s.textContent=new Date(m.t).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+      d.append(b,t,s);return d}));
+    if(near)box.scrollTop=box.scrollHeight;
+  };
+  async function load(){
+    try{
+      if(DB){
+        const r=await fetch(DB+'/messages.json?orderBy=%22%24key%22&limitToLast=100',{cache:'no-store'});
+        if(!r.ok)throw 0;
+        const o=await r.json()||{};
+        msgs=Object.keys(o).sort().map(k=>o[k]).filter(m=>m&&(typeof m.text==='string'||m.img));
+      }else{msgs=JSON.parse(localStorage.getItem(MK)||'[]')}
+    }catch{return}
+    const s=msgs.length+'|'+(msgs.length?msgs[msgs.length-1].t:'');
+    if(s!==sig){sig=s;draw()}
+  }
+  $('nf').onsubmit=e=>{e.preventDefault();const n=$('uname').value.trim().slice(0,24);if(!n)return;
+    uname=n;try{localStorage.setItem(NK,uname)}catch{}ui()};
+  $('rename').onclick=()=>{uname='';$('uname').value='';ui();$('uname').focus()};
+  async function send(text,img){
+    if(Date.now()-lastSend<1000)return;lastSend=Date.now();
+    const m={name:uname,text,t:Date.now(),uid};if(img)m.img=img;
+    msgs.push(m);sig='';draw();$('msgs').scrollTop=$('msgs').scrollHeight;
+    if(DB){try{await fetch(DB+'/messages.json',{method:'POST',body:JSON.stringify(m)})}catch{}load()}
+    else{try{localStorage.setItem(MK,JSON.stringify(msgs.slice(-40)))}catch{}}
+  }
+  $('mf').onsubmit=e=>{e.preventDefault();const text=$('mtext').value.trim().slice(0,300);if(!text)return;$('mtext').value='';send(text,'')};
+  /* emoji bar */
+  $('emobar').replaceChildren(...'😊 😂 😍 🥰 👍 🙏 🌸 🌺 🌻 🌿 🌱 🍃 🪴 🌳 ❤️ 🎉'.split(' ').map(x=>{const b=document.createElement('button');b.type='button';b.textContent=x;
+    b.onclick=()=>{$('mtext').value+=x;$('mtext').focus()};return b}));
+  $('emobtn').onclick=()=>{$('emobar').hidden=!$('emobar').hidden};
+  /* share a photo */
+  $('attach').onclick=()=>$('cphoto').click();
+  $('cphoto').onchange=e=>{const f=e.target.files[0];e.target.value='';if(!f||!f.type.startsWith('image/'))return;
+    const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{
+      const k=Math.min(1,480/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);send('',c.toDataURL('image/jpeg',.6))};im.src=r.result};r.readAsDataURL(f)};
+  ui();load();
+  setInterval(()=>{if(!document.hidden)load()},4000);
+})();
+
+/* ================= AI plant helper (free, keyless) ================= */
+(()=>{
+  const URL_='https://text.pollinations.ai/openai';
+  const SYS="You are a warm, practical plant and gardening helper for a family rooftop garden in a hot, humid climate in India. Answer only plant, gardening, cooking-with-garden-produce and related questions; politely steer other topics back to plants. Use simple English, short answers (under 120 words), plain text with short lines, no markdown symbols. If you are not sure, say so and suggest checking the leaves, soil and roots.";
+  const hist=[];let busy=false;
+  const box=$('aimsgs');
+  const add=(who,text)=>{const d=document.createElement('div');d.className='m'+(who==='me'?' me':'');d.textContent=text;box.append(d);box.scrollTop=box.scrollHeight;return d};
+  add('ai',"Hi! I'm the Plant Helper 🌱 Ask me about watering, yellow leaves, pests, which plants grow on a rooftop, or how to cook with garden greens.");
+  ['Why are my leaves turning yellow?','How often should I water in summer?','Best flowers for a sunny rooftop?','How to grow spinach in a crate?'].forEach(q=>{
+    const b=document.createElement('button');b.type='button';b.textContent=q;b.onclick=()=>{$('aitext').value=q;$('aif').requestSubmit()};$('chips').append(b)});
+  $('aif').onsubmit=async e=>{
+    e.preventDefault();if(busy)return;
+    const q=$('aitext').value.trim();if(!q)return;
+    $('aitext').value='';add('me',q);hist.push({role:'user',content:q});
+    busy=true;$('aisend').disabled=true;const wait=add('ai','🌿 thinking…');
+    try{
+      const r=await fetch(URL_,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:'openai',max_tokens:400,messages:[{role:'system',content:SYS},...hist.slice(-8)]})});
+      if(!r.ok)throw 0;
+      const j=await r.json();
+      const a=String(j.choices?.[0]?.message?.content||'').replace(/\*\*|__|^#+\s*/gm,'').trim();
+      if(!a)throw 0;
+      wait.textContent=a;hist.push({role:'assistant',content:a});
+    }catch{wait.textContent="Sorry, I couldn't answer just now. Please try again in a moment 🙏";hist.pop()}
+    busy=false;$('aisend').disabled=false;box.scrollTop=box.scrollHeight;
+  };
+})();
+
+/* ---------- install as an app ---------- */
+let installEvt=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;$('install').hidden=false});
+$('install').onclick=async()=>{if(!installEvt)return;installEvt.prompt();await installEvt.userChoice;installEvt=null;$('install').hidden=true};
+addEventListener('appinstalled',()=>{$('install').hidden=true});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+
 /* ================= self-building intro: 5 cursors build the site in parallel ================= */
 (async()=>{
   if(/nointro/.test(location.search)){$('skip').remove();$('prog').remove();$('curs').remove();return}
@@ -368,7 +526,7 @@ render();
   $('skip').onclick=()=>{skipped=true};
 
   /* everything that gets built */
-  const SEL='.brand,.links a,.eyebrow,.hero h1,#count,.lead,.hero .btn,.hero-img,#gallery h2,.gal figure,#story h2,.maa,.about>div,#plants h2,.bar>*,.card,.empty,.foot';
+  const SEL='.brand,.links a,.eyebrow,.hero h1,#count,.lead,.hero .btn,.hero-img,#gallery h2,.gal figure,#story h2,.maa,.about>div,#plants h2,.bar>*,.card,.empty,#chat h2,#chat .chatbox,#ai h2,#ai .chatbox,.foot';
   const T=$$(SEL);
   const A=['a-left','a-right','a-zoom','a-flip','a-up','a-wipe'];
   T.forEach((e,i)=>{
@@ -454,6 +612,8 @@ render();
     (async()=>{ // Plants: the cards
       await sleep(1800);
       for(const c of q('.card,.empty'))await c4.pop(c);
+      await c4.type(q('#chat h2')[0]);await c4.pop(q('#chat .chatbox')[0]);
+      await c4.type(q('#ai h2')[0]);await c4.pop(q('#ai .chatbox')[0]);
     })()
   ];
   try{await Promise.all(tasks)}catch(e){}
